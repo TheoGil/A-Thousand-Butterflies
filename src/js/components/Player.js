@@ -10,6 +10,17 @@ const ROTATION_MAX_Y = ThreeMath.degToRad(45);
 
 class Player {
   constructor(onLoadCallback) {
+    this.boundaries = {
+      x: {
+        min: 0,
+        max: 0,
+      },
+      y: {
+        min: 0,
+        max: 0,
+      },
+    };
+
     this.onLoadCallback = onLoadCallback;
     this.onModelLoaded = this.onModelLoaded.bind(this);
     this.initLoader();
@@ -45,6 +56,15 @@ class Player {
     this.onLoadCallback();
   }
 
+  updateBoundaries(dimensions) {
+    this.boundaries.x.min = -dimensions.width / 2;
+    this.boundaries.x.max = dimensions.width / 2;
+    this.boundaries.y.min = -dimensions.height / 2;
+    this.boundaries.y.max = dimensions.height / 2;
+
+    console.log(this.boundaries);
+  }
+
   update() {
     this.controls.updateVelocity();
 
@@ -69,8 +89,17 @@ class Player {
         ROTATION_MAX_Y
       );
 
-    //mapRange(this.controls.velocity.x, 0, 0.2);
-    // this.mesh.rotation.y = mapRange(this.controls.velocity.y, 0, 0.2);
+    // Clamp player's position
+    if (this.mesh.position.x < this.boundaries.x.min) {
+      this.mesh.position.x = this.boundaries.x.min;
+    } else if (this.mesh.position.x > this.boundaries.x.max) {
+      this.mesh.position.x = this.boundaries.x.max;
+    }
+    if (this.mesh.position.y < this.boundaries.y.min) {
+      this.mesh.position.y = this.boundaries.y.min;
+    } else if (this.mesh.position.y > this.boundaries.y.max) {
+      this.mesh.position.y = this.boundaries.y.max;
+    }
   }
 }
 

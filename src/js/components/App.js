@@ -1,8 +1,8 @@
 import {
   Scene,
   PerspectiveCamera,
-  OrthographicCamera,
   WebGLRenderer,
+  Math as ThreeMath,
 } from "three";
 import OrbitControls from "orbit-controls-es6";
 import Clouds from "./Clouds";
@@ -53,6 +53,22 @@ class App {
 
   onResize() {
     this.setRendererSize();
+
+    if (this.player.mesh) {
+      console.log("1");
+      this.player.updateBoundaries(this.computePlayerBoundaries());
+    }
+  }
+
+  computePlayerBoundaries() {
+    // We'd like this method to belong to the player class,
+    // unfortunately, access to the camera object is needed.
+    // So we need to update those value from here and pass them to the player object.
+    const FOV = ThreeMath.degToRad(this.camera.fov);
+    const height =
+      2 * Math.tan(FOV / 2) * Math.abs(this.player.mesh.position.z);
+    const width = height * this.camera.aspect;
+    return { width, height };
   }
 
   setRendererSize() {
@@ -67,6 +83,7 @@ class App {
     this.scene.add(this.clouds.mesh);
 
     this.player = new Player(() => {
+      this.player.updateBoundaries(this.computePlayerBoundaries());
       this.updatables.push(this.player);
       this.scene.add(this.player.mesh);
     });
