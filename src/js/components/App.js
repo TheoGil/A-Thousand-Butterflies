@@ -1,6 +1,12 @@
-import { Scene, PerspectiveCamera, WebGLRenderer } from "three";
+import {
+  Scene,
+  PerspectiveCamera,
+  OrthographicCamera,
+  WebGLRenderer,
+} from "three";
 import OrbitControls from "orbit-controls-es6";
-import CustomPlane from "./CustomPlane";
+import Clouds from "./Clouds";
+import Player from "./Player";
 
 class App {
   constructor() {
@@ -8,6 +14,9 @@ class App {
 
     this.onResize = this.onResize.bind(this);
     this.render = this.render.bind(this);
+
+    // An array of elements that are "updatables", wich need to be updated at every render loop
+    this.updatables = [];
 
     this.initScene();
     this.initRenderer();
@@ -29,7 +38,7 @@ class App {
       0.1,
       1000
     );
-    this.camera.position.z = 100;
+    this.camera.position.z = 0.1;
     new OrbitControls(this.camera, this.renderer.domElement);
   }
 
@@ -38,7 +47,7 @@ class App {
       canvas: document.getElementById("js-canvas"),
       antialias: true,
     });
-    this.renderer.setClearColor(0x263339);
+    this.renderer.setClearColor(0x9bd5ff);
     window.addEventListener("resize", this.onResize);
   }
 
@@ -53,14 +62,22 @@ class App {
   }
 
   addObjects() {
-    this.customPlane = new CustomPlane();
-    this.scene.add(this.customPlane.mesh);
+    this.clouds = new Clouds();
+    this.updatables.push(this.clouds);
+    this.scene.add(this.clouds.mesh);
+
+    this.player = new Player(() => {
+      this.updatables.push(this.player);
+      this.scene.add(this.player.mesh);
+    });
   }
 
   render() {
     requestAnimationFrame(this.render);
 
-    this.customPlane.mesh.material.uniforms.u_time.value++;
+    this.updatables.forEach((updatable) => {
+      updatable.update();
+    });
 
     this.renderer.render(this.scene, this.camera);
   }
