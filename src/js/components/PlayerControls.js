@@ -2,6 +2,8 @@ const TOP_KEYCODE = 38;
 const RIGHT_KEYCODE = 39;
 const BOTTOM_KEYCODE = 40;
 const LEFT_KEYCODE = 37;
+const SPACE_KEYCODE = 32;
+
 const VELOCITY_MAX = 0.2;
 const VELOCITY_STEP = 0.05;
 const FRICTION = 0.9;
@@ -13,6 +15,7 @@ class PlayerControls {
       down: false,
       left: false,
       right: false,
+      space: false,
     };
 
     // Max velocity needs to beed a property of the PlayerControls object so we're able to retrieve
@@ -48,6 +51,9 @@ class PlayerControls {
         break;
       case LEFT_KEYCODE:
         this.keys.left = isDown;
+        break;
+      case SPACE_KEYCODE:
+        this.keys.space = isDown;
         break;
     }
   }

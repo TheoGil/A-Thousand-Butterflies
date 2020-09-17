@@ -3,10 +3,17 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   Math as ThreeMath,
+  BoxGeometry,
+  MeshBasicMaterial,
+  Mesh,
+  Color,
+  Vector3,
+  ArrowHelper,
 } from "three";
 import OrbitControls from "orbit-controls-es6";
 import Clouds from "./Clouds";
 import Player from "./Player";
+import EnemiesFactory from "./EnemiesFactory";
 
 class App {
   constructor() {
@@ -55,7 +62,6 @@ class App {
     this.setRendererSize();
 
     if (this.player.mesh) {
-      console.log("1");
       this.player.updateBoundaries(this.computePlayerBoundaries());
     }
   }
@@ -86,7 +92,20 @@ class App {
       this.player.updateBoundaries(this.computePlayerBoundaries());
       this.updatables.push(this.player);
       this.scene.add(this.player.mesh);
+      this.player.mesh.add(this.player.weapon.mesh);
+      // this.scene.add(this.player.weapon.arrowHelper);
     });
+
+    this.enemiesFactory = new EnemiesFactory();
+    this.enemiesFactory.deadEnemies.forEach((enemy) => {
+      this.scene.add(enemy.mesh);
+    });
+
+    this.enemiesFactory.spawn();
+    this.enemiesFactory.spawn();
+    this.enemiesFactory.spawn();
+    this.enemiesFactory.spawn();
+    this.enemiesFactory.spawn();
   }
 
   render() {
@@ -95,6 +114,15 @@ class App {
     this.updatables.forEach((updatable) => {
       updatable.update();
     });
+
+    if (this.player.mesh) {
+      const intersects = this.player.weapon.raycaster.intersectObjects(
+        this.scene.children
+      );
+      intersects.forEach((intersect) => {
+        intersect.object.material.color = new Color(0x0000ff);
+      });
+    }
 
     this.renderer.render(this.scene, this.camera);
   }
