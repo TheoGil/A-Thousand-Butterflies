@@ -50,9 +50,6 @@ class Player {
     // Rotate mesh so it face the horizon
     this.mesh.rotation.y = ROTATION_Y_INITIAL;
 
-    // Move the mesh a bit forward
-    this.mesh.position.z = -5;
-
     this.onLoadCallback();
   }
 

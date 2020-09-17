@@ -38,7 +38,7 @@ class App {
       0.1,
       1000
     );
-    this.camera.position.z = 0.1;
+    this.camera.position.z = 5;
     new OrbitControls(this.camera, this.renderer.domElement);
   }
 
@@ -64,8 +64,7 @@ class App {
     // unfortunately, access to the camera object is needed.
     // So we need to update those value from here and pass them to the player object.
     const FOV = ThreeMath.degToRad(this.camera.fov);
-    const height =
-      2 * Math.tan(FOV / 2) * Math.abs(this.player.mesh.position.z);
+    const height = 2 * Math.tan(FOV / 2) * this.camera.position.z;
     const width = height * this.camera.aspect;
     return { width, height };
   }
