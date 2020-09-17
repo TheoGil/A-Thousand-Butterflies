@@ -55,7 +55,6 @@ class App {
     this.setRendererSize();
 
     if (this.player.mesh) {
-      console.log("1");
       this.player.updateBoundaries(this.computePlayerBoundaries());
     }
   }
