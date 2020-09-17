@@ -61,8 +61,6 @@ class Player {
     this.boundaries.x.max = dimensions.width / 2;
     this.boundaries.y.min = -dimensions.height / 2;
     this.boundaries.y.max = dimensions.height / 2;
-
-    console.log(this.boundaries);
   }
 
   update() {
