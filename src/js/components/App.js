@@ -7,6 +7,8 @@ import {
 import OrbitControls from "orbit-controls-es6";
 import Clouds from "./Clouds";
 import Player from "./Player";
+import ButterflyFactory from "./ButterflyFactory";
+import Butterfly from "./Butterfly";
 
 class App {
   constructor() {
@@ -33,12 +35,14 @@ class App {
 
   initCamera() {
     this.camera = new PerspectiveCamera(
-      75,
+      25,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
-    this.camera.position.z = 5;
+    this.camera.position.z = 20;
+    this.camera.position.y = 1;
+    this.camera.lookAt(0, 0, 0);
     new OrbitControls(this.camera, this.renderer.domElement);
   }
 
@@ -54,12 +58,15 @@ class App {
   onResize() {
     this.setRendererSize();
 
+    const boundaries = this.computeBoundaries();
+
+    this.butterflyFactory.updateBoundaries(boundaries);
     if (this.player.mesh) {
-      this.player.updateBoundaries(this.computePlayerBoundaries());
+      this.player.updateBoundaries(boundaries);
     }
   }
 
-  computePlayerBoundaries() {
+  computeBoundaries() {
     // We'd like this method to belong to the player class,
     // unfortunately, access to the camera object is needed.
     // So we need to update those value from here and pass them to the player object.
@@ -76,23 +83,47 @@ class App {
   }
 
   addObjects() {
+    const boundaries = this.computeBoundaries();
+
     this.clouds = new Clouds();
     this.updatables.push(this.clouds);
     this.scene.add(this.clouds.mesh);
+    /*
+    this.butterflyFactory = new ButterflyFactory({
+      addToScene: (mesh) => {
+        this.scene.add(mesh);
+      },
+    });
+    this.butterflyFactory.updateBoundaries(boundaries);
+    document.addEventListener("click", () => {
+      this.butterflyFactory.spawnButterfly();
+    });
 
     this.player = new Player(() => {
-      this.player.updateBoundaries(this.computePlayerBoundaries());
+      this.player.updateBoundaries(boundaries);
       this.updatables.push(this.player);
       this.scene.add(this.player.mesh);
     });
+    */
+    this.bf = new Butterfly();
+    this.bf.mesh.visible = true;
+    this.scene.add(this.bf.mesh);
   }
 
   render() {
     requestAnimationFrame(this.render);
 
+    // this.bf.update();
     this.updatables.forEach((updatable) => {
       updatable.update();
     });
+    /*
+    this.butterflyFactory.update({
+      netPosition: this.player.net.mesh.localToWorld(
+        this.player.net.net.position.clone()
+      ),
+    });
+    */
 
     this.renderer.render(this.scene, this.camera);
   }

@@ -3,7 +3,7 @@ const RIGHT_KEYCODE = 39;
 const BOTTOM_KEYCODE = 40;
 const LEFT_KEYCODE = 37;
 const VELOCITY_MAX = 0.2;
-const VELOCITY_STEP = 0.05;
+const VELOCITY_STEP = 0.01;
 const FRICTION = 0.9;
 
 class PlayerControls {

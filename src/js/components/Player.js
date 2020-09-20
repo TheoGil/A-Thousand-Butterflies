@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import model from "../../models/plane.glb";
 import PlayerControls from "./PlayerControls";
 import mapRange from "../utilities/mapRange";
+import Net from "./Net";
 
 const ROTATION_Y_INITIAL = ThreeMath.degToRad(90);
 const ROTATION_MAX_X = ThreeMath.degToRad(45);
@@ -25,6 +26,7 @@ class Player {
     this.onModelLoaded = this.onModelLoaded.bind(this);
     this.initLoader();
     this.controls = new PlayerControls();
+    this.net = new Net();
 
     this.xVel = 0;
     this.yVel = 0;
@@ -49,6 +51,9 @@ class Player {
 
     // Rotate mesh so it face the horizon
     this.mesh.rotation.y = ROTATION_Y_INITIAL;
+
+    // Attach net to player
+    this.mesh.add(this.net.mesh);
 
     this.onLoadCallback();
   }
@@ -95,6 +100,9 @@ class Player {
     } else if (this.mesh.position.y > this.boundaries.y.max) {
       this.mesh.position.y = this.boundaries.y.max;
     }
+
+    // Update net
+    this.net.update();
   }
 }
 
